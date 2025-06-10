@@ -149,9 +149,9 @@ function setupFirestoreListener() {
         return;
     }
 
-    // --- CHANGE MADE HERE: Collection path changed to public ---
-    // This collection path stores data publicly, accessible by all users of this app.
-    const itemsCollectionRef = collection(db, `artifacts/${appId}/public/itemLocations`);
+    // --- CHANGE MADE HERE: Collection path changed for valid segment count ---
+    // Now uses artifacts/{appId}/sharedItems (3 segments: collection/document/collection)
+    const itemsCollectionRef = collection(db, `artifacts/${appId}/sharedItems`);
 
     onSnapshot(itemsCollectionRef, (snapshot) => {
         const items = [];
@@ -188,8 +188,9 @@ async function handleRegister() {
     }
 
     try {
-        // --- CHANGE MADE HERE: Collection path changed to public ---
-        const itemsCollectionRef = collection(db, `artifacts/${appId}/public/itemLocations`);
+        // --- CHANGE MADE HERE: Collection path changed for valid segment count ---
+        // Now uses artifacts/${appId}/sharedItems (3 segments: collection/document/collection)
+        const itemsCollectionRef = collection(db, `artifacts/${appId}/sharedItems`);
 
         await addDoc(itemsCollectionRef, {
             itemCode: itemCode,
