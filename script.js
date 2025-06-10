@@ -48,7 +48,7 @@ const initialAuthToken = null; // No initial token for GitHub Pages by default.
 // Global variables for Firebase instances
 let db;
 let auth;
-let currentUserId = null;
+let currentUserId = null; // Still used for authentication, but not for data path
 let allItems = []; // Local cache for all registered items
 
 // DOM elements
@@ -116,7 +116,7 @@ async function initializeFirebase() {
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 // User is signed in
-                currentUserId = user.uid;
+                currentUserId = user.uid; // Store user ID even if data is public, as it's needed for auth status check
                 userIdValue.textContent = currentUserId;
                 userIdDisplay.classList.remove('hidden');
                 console.log("Firebase Auth Ready. User ID:", currentUserId);
@@ -144,14 +144,14 @@ async function initializeFirebase() {
  * Sets up the real-time listener for item data from Firestore.
  */
 function setupFirestoreListener() {
-    if (!db || !currentUserId) {
-        console.warn("Firestore or User ID not ready for listener setup. Cannot fetch data.");
+    if (!db) { // No longer needs currentUserId to fetch public data
+        console.warn("Firestore not ready for listener setup. Cannot fetch data.");
         return;
     }
 
-    // This collection path stores data privately for each user, tied to the 'appId'
-    // defined at the top of this script.
-    const itemsCollectionRef = collection(db, `artifacts/${appId}/users/${currentUserId}/itemLocations`);
+    // --- CHANGE MADE HERE: Collection path changed to public ---
+    // This collection path stores data publicly, accessible by all users of this app.
+    const itemsCollectionRef = collection(db, `artifacts/${appId}/public/itemLocations`);
 
     onSnapshot(itemsCollectionRef, (snapshot) => {
         const items = [];
@@ -181,18 +181,21 @@ async function handleRegister() {
         showMessage('Please enter both Item Code and Location.', 'info');
         return;
     }
-    if (!db || !currentUserId) {
-        showMessage('Database not ready. Please wait or check Firebase config.', 'error');
+    // Writing requires authentication. If currentUserId is null, it means auth failed.
+    if (!db || !auth.currentUser) {
+        showMessage('Authentication required to register data. Please wait or check Firebase config/rules.', 'error');
         return;
     }
 
     try {
-        const itemsCollectionRef = collection(db, `artifacts/${appId}/users/${currentUserId}/itemLocations`);
+        // --- CHANGE MADE HERE: Collection path changed to public ---
+        const itemsCollectionRef = collection(db, `artifacts/${appId}/public/itemLocations`);
 
         await addDoc(itemsCollectionRef, {
             itemCode: itemCode,
             location: location,
-            timestamp: new Date().toISOString()
+            timestamp: new Date().toISOString(),
+            registeredBy: auth.currentUser.uid // Optional: record who registered it
         });
 
         showMessage(`Item '${itemCode}' registered successfully!`, 'success');
