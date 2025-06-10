@@ -86,11 +86,16 @@ function hideMessage() {
  * Initializes Firebase and sets up authentication.
  */
 async function initializeFirebase() {
+    // Ensure the app container is shown and loading spinner is hidden,
+    // regardless of Firebase config presence, to allow UI to render.
+    loadingSpinner.classList.add('hidden');
+    appContainer.classList.remove('hidden');
+
     try {
         if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId) {
             console.warn("Firebase configuration is empty or incomplete. Data will not persist. Please add your config for full functionality.");
-            // For GitHub Pages, if config is missing, still try anonymous sign-in but warn.
-            // This allows the UI to load, but data won't save.
+            showMessage("Warning: Firebase config missing. Data won't persist.", 'info');
+            return; // Exit if no config, as Firebase init would fail
         }
 
         const app = initializeApp(firebaseConfig);
@@ -118,13 +123,10 @@ async function initializeFirebase() {
                     showMessage(`Authentication failed: ${error.message}. Data will not persist.`, 'error');
                 }
             }
-            loadingSpinner.classList.add('hidden');
-            appContainer.classList.remove('hidden'); // Show app container after auth attempt
         });
     } catch (error) {
         console.error("Firebase initialization error:", error);
         showMessage(`Initialization failed: ${error.message}. Check your Firebase config.`, 'error');
-        loadingSpinner.classList.add('hidden');
     }
 }
 
