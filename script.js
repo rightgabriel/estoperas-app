@@ -8,13 +8,22 @@ import { getFirestore, collection, addDoc, query, where, onSnapshot } from "http
 // For deployment on GitHub Pages, you MUST replace the `firebaseConfig` object
 // below with your OWN Firebase project's configuration details.
 //
-// 1. Go to your Firebase project in the Firebase Console.
-// 2. Click on the "Project settings" gear icon.
-// 3. Scroll down to "Your apps" section and select "Web app" (if you haven't added one, do so).
-// 4. Copy the entire `firebaseConfig` object provided there and paste it below.
+// HOW TO GET YOUR FIREBASE CONFIG:
+// 1. Go to your Firebase project in the Firebase Console: https://console.firebase.google.com
+// 2. Select your project.
+// 3. Click on the "Project settings" gear icon (near "Project overview").
+// 4. Scroll down to "Your apps" section.
+// 5. If you haven't added a web app, click the "</>" (web) icon to register one.
+//    (Make sure to UNCHECK "Also set up Firebase Hosting" if you're using GitHub Pages)
+// 6. After registering, Firebase will present you with the `firebaseConfig` object.
+//    Copy the ENTIRE object (including all key-value pairs) and paste it below.
 //
-// If you leave `firebaseConfig` empty or with placeholder values, your data WILL NOT persist
-// and authentication might not function correctly on GitHub Pages.
+// CRITICAL CHECKS FOR "auth/configuration-not-found" ERROR:
+// - Ensure `firebaseConfig` contains all fields: `apiKey`, `authDomain`, `projectId`, `storageBucket`, `messagingSenderId`, `appId`.
+// - In your Firebase Console, navigate to "Build" > "Authentication" > "Sign-in method".
+//   - Make sure "Anonymous" is **Enabled**. This app uses anonymous authentication by default.
+//
+// If `firebaseConfig` is empty or incorrect, data will NOT persist and authentication will fail.
 
 const appId = 'github-item-locator'; // You can choose an app ID for your Firebase rules.
                                      // This is used to define your data path in Firestore rules.
@@ -187,6 +196,7 @@ async function handleRegister() {
         });
 
         showMessage(`Item '${itemCode}' registered successfully!`, 'success');
+        console.log("Clearing input fields..."); // Added for debugging
         itemCodeInput.value = '';
         locationInput.value = '';
     } catch (error) {
