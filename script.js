@@ -91,13 +91,15 @@ async function initializeFirebase() {
     loadingSpinner.classList.add('hidden');
     appContainer.classList.remove('hidden');
 
-    try {
-        if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId) {
-            console.warn("Firebase configuration is empty or incomplete. Data will not persist. Please add your config for full functionality.");
-            showMessage("Warning: Firebase config missing. Data won't persist.", 'info');
-            return; // Exit if no config, as Firebase init would fail
-        }
+    // IMPORTANT: Check if firebaseConfig is valid before attempting to initialize
+    if (Object.keys(firebaseConfig).length === 0 || !firebaseConfig.projectId || !firebaseConfig.apiKey) {
+        console.warn("Firebase configuration is empty or incomplete. Data will not persist. Please add your config for full functionality.");
+        showMessage("Warning: Firebase config missing or incomplete. Data won't persist.", 'info');
+        // Do NOT attempt to initialize Firebase if config is missing
+        return;
+    }
 
+    try {
         const app = initializeApp(firebaseConfig);
         db = getFirestore(app);
         auth = getAuth(app);
