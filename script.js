@@ -20,14 +20,13 @@ const appId = 'github-item-locator'; // You can choose an app ID for your Fireba
                                      // This is used to define your data path in Firestore rules.
 
 const firebaseConfig = {
-    // PASTE YOUR ACTUAL FIREBASE CONFIG OBJECT HERE
-    // Example (DO NOT USE THIS DIRECTLY, GET YOUR OWN FROM FIREBASE CONSOLE):
-    // apiKey: "AIzaSyC_YOUR_API_KEY",
-    // authDomain: "your-project-id.firebaseapp.com",
-    // projectId: "your-project-id",
-    // storageBucket: "your-project-id.appspot.com",
-    // messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    // appId: "1:YOUR_APP_ID:web:YOUR_WEB_APP_ID"
+  apiKey: "AIzaSyCAPXanGCwurgavxmg5C2osabockqQ9zBs",
+  authDomain: "estoperas-app.firebaseapp.com",
+  projectId: "estoperas-app",
+  storageBucket: "estoperas-app.firebasestorage.app",
+  messagingSenderId: "624470424480",
+  appId: "1:624470424480:web:ca13781a3726c0afe7c2c5",
+  measurementId: "G-JD58W55L3T"
 };
 
 // On GitHub Pages, there's no '__initial_auth_token' unless you manually provide it.
